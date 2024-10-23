@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Add Orchestra{% endblock %}
+{% block content %}
+<h1>Add a New Orchestra</h1>
+<form method="post">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ form.name.label(class="form-label") }}
+        {{ form.name(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.is_modern() }}
+        {{ form.is_modern.label() }}
+    </div>
+    <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
+    <a href="{{ url_for('orchestra_bp.list_orchestras') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

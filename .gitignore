@@ -1,0 +1,97 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Flask cache and session files
+instance/
+*.db
+*.sqlite3
+
+# PyCharm
+.idea/
+
+# VSCode
+.vscode/
+
+# Environments
+.env
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Migrations
+migrations/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# MacOS
+.DS_Store
+
+# Logs
+*.log
+
+# Static asset caches
+*.css.map
+*.js.map
+
+# Profiles
+.profile
+
+# Other
+*.pid
+*.swp
+
+# Generated files
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# Ignore virtual environment folders
+venv/
+env/
+ENV/

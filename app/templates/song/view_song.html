@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}View Song{% endblock %}
+{% block content %}
+<h1>Song Details: {{ song.title }}</h1>
+<ul class="list-group">
+    <li class="list-group-item"><strong>Title:</strong> {{ song.title }}</li>
+    <li class="list-group-item"><strong>Orchestra:</strong> {{ song.orchestra.name }}</li>
+    <li class="list-group-item"><strong>Type:</strong> {{ song.type.name }}</li>
+    <li class="list-group-item"><strong>Style:</strong> {{ song.style.name if song.style else 'N/A' }}</li>
+    <li class="list-group-item"><strong>Singers:</strong>
+        {% for singer in song.singers %}
+            {{ singer.name }}{% if not loop.last %}, {% endif %}
+        {% endfor %}
+    </li>
+    <li class="list-group-item"><strong>Recording Year:</strong> {{ song.recording_year }}</li>
+    <li class="list-group-item"><strong>Instrumental:</strong> {{ 'Yes' if song.is_instrumental else 'No' }}</li>
+    <li class="list-group-item"><strong>Spotify Link:</strong>
+        {% if song.spotify_link %}
+            <a href="{{ song.spotify_link }}" target="_blank">Listen on Spotify</a>
+        {% else %}
+            N/A
+        {% endif %}
+    </li>
+    <li class="list-group-item"><strong>YouTube Link:</strong>
+        {% if song.youtube_link %}
+            <a href="{{ song.youtube_link }}" target="_blank">Watch on YouTube</a>
+        {% else %}
+            N/A
+        {% endif %}
+    </li>
+    <li class="list-group-item"><strong>Duration:</strong> {{ song.duration_seconds }} seconds</li>
+</ul>
+<a href="{{ url_for('song_bp.list_songs') }}" class="btn btn-secondary mt-3">Back to Songs</a>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Edit Tanda{% endblock %}
+{% block content %}
+<h1>Edit Tanda: {{ tanda.name }}</h1>
+<form method="post">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ form.name.label(class="form-label") }}
+        {{ form.name(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.tanda_type_id.label(class="form-label") }}
+        {{ form.tanda_type_id(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.comments.label(class="form-label") }}
+        {{ form.comments(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.spotify_link.label(class="form-label") }}
+        {{ form.spotify_link(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.youtube_link.label(class="form-label") }}
+        {{ form.youtube_link(class="form-control") }}
+    </div>
+
+    <!-- Song Selection -->
+    <div class="form-group">
+        <label for="song-search">Add Songs to Tanda:</label>
+        <input type="text" id="song-search" class="form-control" placeholder="Search for songs...">
+        <div id="song-search-results" class="list-group"></div>
+    </div>
+    <div class="form-group">
+        <label>Selected Songs:</label>
+        <ul id="selected-songs" class="list-group"></ul>
+    </div>
+    {{ form.song_ids(value=','.join(song_ids)) }}
+
+    <!-- Preload selected songs -->
+    {% for song in tanda.songs %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const song = {
+            id: {{ song.id }},
+            title: "{{ song.title }}",
+            orchestra: "{{ song.orchestra.name }}"
+        };
+        addSongToTanda(song);
+    });
+    </script>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
+    <a href="{{ url_for('tanda_bp.list_tandas') }}" class="btn btn-secondary">Cancel</a>
+</form>
+
+<!-- Include the same scripts as in create_tanda.html -->
+{% block scripts %}
+<!-- ... [Same as in create_tanda.html] -->
+{% endblock %}
+{% endblock %}

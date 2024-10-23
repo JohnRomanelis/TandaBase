@@ -1,0 +1,13 @@
+<!-- app/templates/home.html -->
+{% extends "base.html" %}
+{% block title %}Home - Tango DJ App{% endblock %}
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">Welcome to the Tango DJ App!</h1>
+    <p class="lead">This application helps tango DJs create and manage playlists for tango events.</p>
+    <hr class="my-4">
+    <p>Get started by exploring the menus above.</p>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('song_bp.list_songs') }}" role="button">Browse Songs</a>
+    <a class="btn btn-secondary btn-lg" href="{{ url_for('tanda_bp.create_tanda') }}" role="button">Create a Tanda</a>
+</div>
+{% endblock %}

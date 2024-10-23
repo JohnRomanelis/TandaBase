@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}View Tanda{% endblock %}
+{% block content %}
+<h1>Tanda Details: {{ tanda.name }}</h1>
+<ul class="list-group">
+    <li class="list-group-item"><strong>Name:</strong> {{ tanda.name }}</li>
+    <li class="list-group-item"><strong>Type:</strong> {{ tanda.type.name }}</li>
+    <li class="list-group-item"><strong>Comments:</strong> {{ tanda.comments or 'N/A' }}</li>
+    <li class="list-group-item"><strong>Spotify Link:</strong>
+        {% if tanda.spotify_link %}
+            <a href="{{ tanda.spotify_link }}" target="_blank">Listen on Spotify</a>
+        {% else %}
+            N/A
+        {% endif %}
+    </li>
+    <li class="list-group-item"><strong>YouTube Link:</strong>
+        {% if tanda.youtube_link %}
+            <a href="{{ tanda.youtube_link }}" target="_blank">Watch on YouTube</a>
+        {% else %}
+            N/A
+        {% endif %}
+    </li>
+</ul>
+<h2 class="mt-4">Songs in this Tanda</h2>
+<ol class="list-group">
+    {% for song in tanda.songs %}
+    <li class="list-group-item">
+        {{ song.title }} by {{ song.orchestra.name }}
+    </li>
+    {% endfor %}
+</ol>
+<a href="{{ url_for('tanda_bp.list_tandas') }}" class="btn btn-secondary mt-3">Back to Tandas</a>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}View Playlist{% endblock %}
+{% block content %}
+<h1>Playlist Details: {{ playlist.name }}</h1>
+<ul class="list-group">
+    <li class="list-group-item"><strong>Name:</strong> {{ playlist.name }}</li>
+    <li class="list-group-item"><strong>Description:</strong> {{ playlist.description or 'N/A' }}</li>
+</ul>
+<h2 class="mt-4">Tandas in this Playlist</h2>
+<ol class="list-group">
+    {% for tanda in playlist.tandas %}
+    <li class="list-group-item">
+        {{ tanda.name }} ({{ tanda.type.name }})
+    </li>
+    {% endfor %}
+</ol>
+<a href="{{ url_for('playlist_bp.list_playlists') }}" class="btn btn-secondary mt-3">Back to Playlists</a>
+{% endblock %}

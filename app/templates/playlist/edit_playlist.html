@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Edit Playlist{% endblock %}
+{% block content %}
+<h1>Edit Playlist: {{ playlist.name }}</h1>
+<form method="post">
+    {{ form.hidden_tag() }}
+    <!-- Form fields are the same as in create_playlist.html -->
+    <!-- ... [Same as in create_playlist.html] -->
+    {{ form.tanda_ids(value=','.join(tanda_ids)) }}
+
+    <!-- Preload selected tandas -->
+    {% for tanda in playlist.tandas %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tanda = {
+            id: {{ tanda.id }},
+            name: "{{ tanda.name }}",
+            type: "{{ tanda.type.name }}"
+        };
+        addTandaToPlaylist(tanda);
+    });
+    </script>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
+    <a href="{{ url_for('playlist_bp.list_playlists') }}" class="btn btn-secondary">Cancel</a>
+</form>
+
+<!-- Include the same scripts as in create_playlist.html -->
+{% block scripts %}
+<!-- ... [Same as in create_playlist.html] -->
+{% endblock %}
+{% endblock %}
