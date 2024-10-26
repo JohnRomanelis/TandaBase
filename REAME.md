@@ -14,5 +14,5 @@
 - [x] Edit playlist is not working - The view is loading the tandas properly
 
 ## UI
-- [ ] When a song is instrumental disable the singer option.
+- [ ] When a song is instrumental disable the singer option. - New UI
 
