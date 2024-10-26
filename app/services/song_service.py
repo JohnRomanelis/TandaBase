@@ -12,6 +12,8 @@ class SongService:
     def create_song(data):
         # Validate required fields
         required_fields = ['title', 'orchestra_id', 'type_id']
+        for d in data:
+            print(d)
         for field in required_fields:
             if field not in data or not data[field]:
                 raise ValueError(f"{field} is required.")
@@ -133,3 +135,32 @@ class SongService:
     @staticmethod
     def search_songs(query):
         return Song.query.filter(Song.title.ilike(f'%{query}%')).order_by(Song.title).all()
+    
+    @staticmethod
+    def advanced_search_songs(title=None, orchestra=None, singer=None, type_id=None, style_id=None, year_from=None, year_to=None):
+        query = Song.query
+
+        if title:
+            query = query.filter(Song.title.ilike(f'%{title}%'))
+
+        if orchestra:
+            query = query.join(Orchestra).filter(Orchestra.name.ilike(f'%{orchestra}%'))
+
+        if singer:
+            query = query.join(Singer).filter(Singer.name.ilike(f'%{singer}%'))
+
+        if type_id:
+            query = query.filter(Song.type_id == type_id)
+
+        if style_id:
+            query = query.filter(Song.style_id == style_id)
+
+        if year_from:
+            query = query.filter(Song.year >= year_from)
+
+        if year_to:
+            query = query.filter(Song.year <= year_to)
+
+        songs = query.order_by(Song.title).limit(50).all()
+
+        return songs

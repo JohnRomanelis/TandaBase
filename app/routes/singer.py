@@ -2,15 +2,17 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.forms.singer_forms import SingerForm
+from app. forms.delete_form import DeleteForm
 from app.services.singer_service import SingerService
 from app.extensions import db
 
 singer_bp = Blueprint('singer_bp', __name__)
 
-@singer_bp.route('/', methods=['GET'])
+@singer_bp.route('/') #, methods=['GET']
 def list_singers():
     singers = SingerService.get_all_singers()
-    return render_template('singer/list_singers.html', singers=singers)
+    delete_form = DeleteForm()
+    return render_template('singer/list_singers.html', singers=singers, delete_form=delete_form)
 
 @singer_bp.route('/add', methods=['GET', 'POST'])
 def add_singer():
@@ -45,9 +47,12 @@ def edit_singer(singer_id):
 
 @singer_bp.route('/delete/<int:singer_id>', methods=['POST'])
 def delete_singer(singer_id):
-    success = SingerService.delete_singer(singer_id)
-    if success:
-        flash('Singer deleted successfully!', 'success')
-    else:
-        flash('Singer not found.', 'danger')
+    try: 
+        success = SingerService.delete_singer(singer_id)
+        if success:
+            flash('Singer deleted successfully!', 'success')
+        else:
+            flash('Singer not found.', 'danger')
+    except ValueError as e:
+        flash(str(e), 'danger')
     return redirect(url_for('singer_bp.list_singers'))

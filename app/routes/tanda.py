@@ -2,6 +2,7 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from app.forms.tanda_forms import TandaForm
+from app.forms.delete_form import DeleteForm
 from app.services.tanda_service import TandaService
 from app.services.song_service import SongService
 from app.extensions import db
@@ -11,7 +12,8 @@ tanda_bp = Blueprint('tanda_bp', __name__)
 @tanda_bp.route('/', methods=['GET'])
 def list_tandas():
     tandas = TandaService.get_all_tandas()
-    return render_template('tanda/list_tandas.html', tandas=tandas)
+    delete_form = DeleteForm()
+    return render_template('tanda/list_tandas.html', tandas=tandas, delete_form=delete_form)
 
 @tanda_bp.route('/create', methods=['GET', 'POST'])
 def create_tanda():
@@ -45,15 +47,23 @@ def edit_tanda(tanda_id):
             'comments': form.comments.data,
             'spotify_link': form.spotify_link.data,
             'youtube_link': form.youtube_link.data,
-            'song_ids': request.form.getlist('song_ids')
+            'song_ids': request.form.get('song_ids', '').split(',')
         }
         TandaService.update_tanda(tanda_id, data)
         flash('Tanda updated successfully!', 'success')
         return redirect(url_for('tanda_bp.list_tandas'))
 
-    # Preload song IDs for existing tanda
-    song_ids = [str(song.id) for song in tanda.songs]
-    return render_template('tanda/edit_tanda.html', form=form, tanda=tanda, song_ids=song_ids)
+    # Prepare preloaded songs data, ensuring all values are defined
+    preloaded_songs = []
+    for song in tanda.songs:
+        song_dict = {
+            'id': song.id,
+            'title': song.title or '',
+            'orchestra': song.orchestra.name if song.orchestra and song.orchestra.name else ''
+        }
+        preloaded_songs.append(song_dict)
+
+    return render_template('tanda/edit_tanda.html', form=form, tanda=tanda, preloaded_songs=preloaded_songs)
 
 @tanda_bp.route('/view/<int:tanda_id>', methods=['GET'])
 def view_tanda(tanda_id):

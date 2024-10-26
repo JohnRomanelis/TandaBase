@@ -3,6 +3,7 @@
 from app.models.playlist import Playlist
 from app.models.tanda import Tanda
 from app.extensions import db
+from sqlalchemy import text
 
 class PlaylistService:
     @staticmethod
@@ -13,6 +14,8 @@ class PlaylistService:
 
         # Fetch tandas
         tanda_ids = data.get('tanda_ids', [])
+        # remove empty strings  
+        tanda_ids = [int(tanda_id) for tanda_id in tanda_ids if tanda_id]
         tandas = []
         if tanda_ids:
             tandas = Tanda.query.filter(Tanda.id.in_(tanda_ids)).all()
@@ -22,7 +25,9 @@ class PlaylistService:
         # Create the playlist
         playlist = Playlist(
             name=data['name'],
-            description=data.get('description')
+            description=data.get('description'),
+            spotify_link=data.get('spotify_link'),
+            youtube_link=data.get('youtube_link')
         )
         db.session.add(playlist)
         db.session.commit()
@@ -31,7 +36,7 @@ class PlaylistService:
         for order, tanda_id in enumerate(tanda_ids):
             tanda = Tanda.query.get(tanda_id)
             db.session.execute(
-                "INSERT INTO playlist_tandas (playlist_id, tanda_id, \"order\") VALUES (:playlist_id, :tanda_id, :order)",
+                text("INSERT INTO playlist_tandas (playlist_id, tanda_id, \"order\") VALUES (:playlist_id, :tanda_id, :order)"),
                 {'playlist_id': playlist.id, 'tanda_id': tanda.id, 'order': order}
             )
         db.session.commit()
@@ -53,6 +58,12 @@ class PlaylistService:
         if 'description' in data:
             playlist.description = data['description']
 
+        if 'spotify_link' in data:
+            playlist.spotify_link = data['spotify_link']
+
+        if 'youtube_link' in data:
+            playlist.youtube_link = data['youtube_link']
+
         db.session.commit()
 
         # Update tandas
@@ -63,14 +74,14 @@ class PlaylistService:
                 raise ValueError("Some tandas not found.")
 
             # Clear existing associations
-            db.session.execute("DELETE FROM playlist_tandas WHERE playlist_id = :playlist_id", {'playlist_id': playlist.id})
+            db.session.execute(text("DELETE FROM playlist_tandas WHERE playlist_id = :playlist_id"), {'playlist_id': playlist.id})
             db.session.commit()
 
             # Re-associate tandas with order
             for order, tanda_id in enumerate(tanda_ids):
                 tanda = Tanda.query.get(tanda_id)
                 db.session.execute(
-                    "INSERT INTO playlist_tandas (playlist_id, tanda_id, \"order\") VALUES (:playlist_id, :tanda_id, :order)",
+                    text("INSERT INTO playlist_tandas (playlist_id, tanda_id, \"order\") VALUES (:playlist_id, :tanda_id, :order)"),
                     {'playlist_id': playlist.id, 'tanda_id': tanda.id, 'order': order}
                 )
             db.session.commit()

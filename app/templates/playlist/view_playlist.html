@@ -5,6 +5,20 @@
 <ul class="list-group">
     <li class="list-group-item"><strong>Name:</strong> {{ playlist.name }}</li>
     <li class="list-group-item"><strong>Description:</strong> {{ playlist.description or 'N/A' }}</li>
+    <li class="list-group-item"><strong>Spotify Link:</strong>
+        {% if playlist.spotify_link %}
+            <a href="{{ playlist.spotify_link }}" target="_blank">Listen on Spotify</a>
+        {% else %}
+            N/A
+        {% endif %}
+    </li>
+    <li class="list-group-item"><strong>YouTube Link:</strong>
+        {% if playlist.youtube_link %}
+            <a href="{{ playlist.youtube_link }}" target="_blank">Watch on YouTube</a>
+        {% else %}
+            N/A
+        {% endif %}
+    </li>
 </ul>
 <h2 class="mt-4">Tandas in this Playlist</h2>
 <ol class="list-group">

@@ -1,33 +1,49 @@
+<!-- app/templates/playlist/edit_playlist.html -->
 {% extends "base.html" %}
 {% block title %}Edit Playlist{% endblock %}
 {% block content %}
 <h1>Edit Playlist: {{ playlist.name }}</h1>
 <form method="post">
     {{ form.hidden_tag() }}
-    <!-- Form fields are the same as in create_playlist.html -->
-    <!-- ... [Same as in create_playlist.html] -->
-    {{ form.tanda_ids(value=','.join(tanda_ids)) }}
+    <div class="form-group">
+        {{ form.name.label(class="form-label") }}
+        {{ form.name(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.description.label(class="form-label") }}
+        {{ form.description(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.spotify_link.label(class="form-label") }}
+        {{ form.spotify_link(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.youtube_link.label(class="form-label") }}
+        {{ form.youtube_link(class="form-control") }}
+    </div>
 
-    <!-- Preload selected tandas -->
-    {% for tanda in playlist.tandas %}
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const tanda = {
-            id: {{ tanda.id }},
-            name: "{{ tanda.name }}",
-            type: "{{ tanda.type.name }}"
-        };
-        addTandaToPlaylist(tanda);
-    });
-    </script>
-    {% endfor %}
+    <!-- Tanda Selection -->
+    <div class="form-group">
+        <label for="tanda-search">Add Tandas to Playlist:</label>
+        <input type="text" id="tanda-search" class="form-control" placeholder="Search for tandas...">
+        <div id="tanda-search-results" class="list-group"></div>
+    </div>
+    <div class="form-group">
+        <label>Selected Tandas:</label>
+        <ul id="selected-tandas" class="list-group"></ul>
+    </div>
+    {{ form.tanda_ids() }}
 
     <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
     <a href="{{ url_for('playlist_bp.list_playlists') }}" class="btn btn-secondary">Cancel</a>
 </form>
 
-<!-- Include the same scripts as in create_playlist.html -->
-{% block scripts %}
-<!-- ... [Same as in create_playlist.html] -->
+<!-- Preload the selected tandas data -->
+<script type="application/json" id="preloaded-tandas-data">
+    {{ preloaded_tandas|tojson }}
+</script>
 {% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/playlist.js') }}"></script>
 {% endblock %}

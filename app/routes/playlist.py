@@ -2,6 +2,7 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from app.forms.playlist_forms import PlaylistForm
+from app.forms.delete_form import DeleteForm
 from app.services.playlist_service import PlaylistService
 from app.services.tanda_service import TandaService
 from app.extensions import db
@@ -10,8 +11,9 @@ playlist_bp = Blueprint('playlist_bp', __name__)
 
 @playlist_bp.route('/', methods=['GET'])
 def list_playlists():
+    delete_form = DeleteForm()
     playlists = PlaylistService.get_all_playlists()
-    return render_template('playlist/list_playlists.html', playlists=playlists)
+    return render_template('playlist/list_playlists.html', playlists=playlists, delete_form=delete_form)
 
 @playlist_bp.route('/create', methods=['GET', 'POST'])
 def create_playlist():
@@ -20,6 +22,8 @@ def create_playlist():
         data = {
             'name': form.name.data,
             'description': form.description.data,
+            'spotify_link': form.spotify_link.data,
+            'youtube_link': form.youtube_link.data,
             'tanda_ids': request.form.getlist('tanda_ids')
         }
         PlaylistService.create_playlist(data)
@@ -39,15 +43,26 @@ def edit_playlist(playlist_id):
         data = {
             'name': form.name.data,
             'description': form.description.data,
-            'tanda_ids': request.form.getlist('tanda_ids')
+            'spotify_link': form.spotify_link.data,
+            'youtube_link': form.youtube_link.data,
+            'tanda_ids': request.form.get('tanda_ids', '').split(',')
         }
         PlaylistService.update_playlist(playlist_id, data)
         flash('Playlist updated successfully!', 'success')
         return redirect(url_for('playlist_bp.list_playlists'))
 
-    # Preload tanda IDs for existing playlist
-    tanda_ids = [str(tanda.id) for tanda in playlist.tandas]
-    return render_template('playlist/edit_playlist.html', form=form, playlist=playlist, tanda_ids=tanda_ids)
+    # Prepare preloaded tandas data
+    preloaded_tandas = [
+        {
+            'id': tanda.id,
+            'name': tanda.name or '',
+            'type': tanda.type.name if tanda.type and tanda.type.name else ''
+        }
+        for tanda in playlist.tandas
+    ]
+
+    return render_template('playlist/edit_playlist.html', form=form, playlist=playlist, preloaded_tandas=preloaded_tandas)
+
 
 @playlist_bp.route('/view/<int:playlist_id>', methods=['GET'])
 def view_playlist(playlist_id):

@@ -4,6 +4,7 @@ from app.models.tanda import Tanda
 from app.models.song import Song
 from app.models.type import Type
 from app.extensions import db
+from sqlalchemy import text
 
 class TandaService:
     @staticmethod
@@ -18,6 +19,9 @@ class TandaService:
 
         # Fetch songs
         song_ids = data.get('song_ids', [])
+        # remove empty strings
+        song_ids = [int(song_id) for song_id in song_ids if song_id]
+        print(f'song_ids: {song_ids}')
         songs = []
         if song_ids:
             songs = Song.query.filter(Song.id.in_(song_ids)).all()
@@ -44,7 +48,7 @@ class TandaService:
         for order, song_id in enumerate(song_ids):
             song = Song.query.get(song_id)
             db.session.execute(
-                "INSERT INTO tanda_songs (tanda_id, song_id, \"order\") VALUES (:tanda_id, :song_id, :order)",
+                text("INSERT INTO tanda_songs (tanda_id, song_id, \"order\") VALUES (:tanda_id, :song_id, :order)"),
                 {'tanda_id': tanda.id, 'song_id': song.id, 'order': order}
             )
         db.session.commit()
@@ -89,18 +93,18 @@ class TandaService:
 
             # Ensure all songs are of the same type
             for song in songs:
-                if song.type_id != tanda.type_id:
+                if song.type_id != tanda.tanda_type_id:
                     raise ValueError("All songs must be of the same type as the tanda.")
 
             # Clear existing associations
-            db.session.execute("DELETE FROM tanda_songs WHERE tanda_id = :tanda_id", {'tanda_id': tanda.id})
+            db.session.execute(text("DELETE FROM tanda_songs WHERE tanda_id = :tanda_id"), {'tanda_id': tanda.id})
             db.session.commit()
 
             # Re-associate songs with order
             for order, song_id in enumerate(song_ids):
                 song = Song.query.get(song_id)
                 db.session.execute(
-                    "INSERT INTO tanda_songs (tanda_id, song_id, \"order\") VALUES (:tanda_id, :song_id, :order)",
+                    text("INSERT INTO tanda_songs (tanda_id, song_id, \"order\") VALUES (:tanda_id, :song_id, :order)"),
                     {'tanda_id': tanda.id, 'song_id': song.id, 'order': order}
                 )
             db.session.commit()

@@ -44,6 +44,9 @@ class SingerService:
         singer = Singer.query.get(singer_id)
         if not singer:
             return False
+        # Prevent deletion if there are associated songs
+        if singer.songs:
+            raise ValueError("Cannot delete singer with associated songs.")
         db.session.delete(singer)
         db.session.commit()
         return True

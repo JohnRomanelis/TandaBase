@@ -40,3 +40,19 @@ class SongForm(FlaskForm):
         self.style_id.choices = [(0, '--- Select Style ---')] + get_style_choices()
         self.orchestra_id.choices = get_orchestra_choices()
         self.singer_ids.choices = get_singer_choices()
+
+
+class SongSearchForm(FlaskForm):
+    title = StringField('Title', validators=[Optional()])
+    orchestra = StringField('Orchestra', validators=[Optional()])
+    singer = StringField('Singer', validators=[Optional()])
+    type_id = SelectField('Type', coerce=int, validators=[Optional()])
+    style_id = SelectField('Style', coerce=int, validators=[Optional()])
+    year_from = IntegerField('Year From', validators=[Optional(), NumberRange(min=0, max=9999)])
+    year_to = IntegerField('Year To', validators=[Optional(), NumberRange(min=0, max=9999)])
+    submit = SubmitField('Search')
+
+    def __init__(self, *args, **kwargs):
+        super(SongSearchForm, self).__init__(*args, **kwargs)
+        self.type_id.choices = get_type_choices()
+        self.style_id.choices = get_style_choices()

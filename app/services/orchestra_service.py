@@ -42,6 +42,9 @@ class OrchestraService:
         orchestra = Orchestra.query.get(orchestra_id)
         if not orchestra:
             return False
+        if orchestra.songs:
+            # Prevent deletion if there are associated songs
+            raise ValueError("Cannot delete orchestra with associated songs.")
         db.session.delete(orchestra)
         db.session.commit()
         return True
