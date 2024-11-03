@@ -1,7 +1,11 @@
 {% extends "base.html" %}
+{% from "song/song_search_box.html" import song_search_box %}
 {% block title %}Songs{% endblock %}
 {% block content %}
 <h1>Songs</h1>
+
+<!-- Include the search box macro -->
+{{ song_search_box(orchestras=orchestras, singers=singers, types=types, styles=styles, action_url=url_for('song_bp.search_results'), method='get', use_ajax=False) }}
 
 
 <a href="{{ url_for('song_bp.add_song') }}" class="btn btn-success mb-3">Add New Song</a>
@@ -13,6 +17,7 @@
             <th>Type</th>
             <th>Style</th>
             <th>Singers</th>
+            <th>Year</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -28,6 +33,7 @@
                     {{ singer.name }}{% if not loop.last %}, {% endif %}
                 {% endfor %}
             </td>
+            <td>{{ song.recording_year or 'N/A' }}</td>
             <td>
                 <a href="{{ url_for('song_bp.view_song', song_id=song.id) }}" class="btn btn-info btn-sm">View</a>
                 <a href="{{ url_for('song_bp.edit_song', song_id=song.id) }}" class="btn btn-primary btn-sm">Edit</a>

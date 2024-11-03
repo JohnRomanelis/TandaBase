@@ -132,35 +132,38 @@ class SongService:
     def get_all_songs():
         return Song.query.order_by(Song.title).all()
 
+
     @staticmethod
-    def search_songs(query):
-        return Song.query.filter(Song.title.ilike(f'%{query}%')).order_by(Song.title).all()
-    
-    @staticmethod
-    def advanced_search_songs(title=None, orchestra=None, singer=None, type_id=None, style_id=None, year_from=None, year_to=None):
+    def search_songs(params):
         query = Song.query
 
-        if title:
-            query = query.filter(Song.title.ilike(f'%{title}%'))
+        # Filter by name
+        if params.get('name'):
+            query = query.filter(Song.title.ilike(f"%{params['name']}%"))
 
-        if orchestra:
-            query = query.join(Orchestra).filter(Orchestra.name.ilike(f'%{orchestra}%'))
+        # Filter by orchestra
+        if params.get('orchestra_id'):
+            query = query.filter(Song.orchestra_id == params['orchestra_id'])
 
-        if singer:
-            query = query.join(Singer).filter(Singer.name.ilike(f'%{singer}%'))
+        # Filter by singer
+        if params.get('singer_id'):
+            query = query.join(Song.singers).filter(Singer.id == params['singer_id'])
 
-        if type_id:
-            query = query.filter(Song.type_id == type_id)
+        # Filter by type
+        if params.get('type_id'):
+            query = query.filter(Song.type_id == params['type_id'])
 
-        if style_id:
-            query = query.filter(Song.style_id == style_id)
+        # Filter by style
+        if params.get('style_id'):
+            query = query.filter(Song.style_id == params['style_id'])
 
+        # Filter by year range
+        year_from = params.get('year_from')
+        year_to = params.get('year_to')
         if year_from:
-            query = query.filter(Song.year >= year_from)
-
+            query = query.filter(Song.recording_year >= int(year_from))
         if year_to:
-            query = query.filter(Song.year <= year_to)
+            query = query.filter(Song.recording_year <= int(year_to))
 
-        songs = query.order_by(Song.title).limit(50).all()
-
-        return songs
+        # Execute query
+        return query.order_by(Song.title).all()
