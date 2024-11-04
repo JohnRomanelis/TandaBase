@@ -63,7 +63,10 @@
         </div>
     </div>
     {% if not use_ajax %}
-    <button type="submit" class="btn btn-primary mt-3">Search</button>
+        <button type="submit" class="btn btn-primary mt-3">Search</button>
+    {% else %}
+        <button type="button" id="search-songs-btn" class="btn btn-primary mt-2">Search Songs</button>
     {% endif %}
+
 </form>
 {% endmacro %}

@@ -75,7 +75,6 @@ def list_songs():
     # Fetch required data for the search box
     orchestras = OrchestraService.get_all_orchestras()
     singers = SingerService.get_all_singers()
-    # NOTE: There is no service handling for types and styles
     types = TypeService.get_all_types()
     styles = StyleService.get_all_styles()
 
@@ -119,10 +118,7 @@ def search_results():
         'year_from': year_from,
         'year_to': year_to
     }
-    print(search_params)
     songs = SongService.search_songs(search_params)
-    print(songs)
-
 
     # Fetch required data for the search box
     orchestras = OrchestraService.get_all_orchestras()
@@ -140,3 +136,40 @@ def search_results():
         styles=styles,
         delete_form=delete_form
     )
+
+@song_bp.route('/songs/search_json')
+def search_songs_json():
+    # Get search parameters from query string
+    name = request.args.get('name', '').strip()
+    orchestra_id = request.args.get('orchestra_id', '')
+    singer_id = request.args.get('singer_id', '')
+    type_id = request.args.get('type_id', '')
+    style_id = request.args.get('style_id', '')
+    year_from = request.args.get('year_from', '')
+    year_to = request.args.get('year_to', '')
+
+    # Perform search using the service layer
+    search_params = {
+        'name': name,
+        'orchestra_id': orchestra_id,
+        'singer_id': singer_id,
+        'type_id': type_id,
+        'style_id': style_id,
+        'year_from': year_from,
+        'year_to': year_to
+    }
+    songs = SongService.search_songs(search_params)
+
+    # Return JSON with all relevant song attributes
+    results = []
+    for song in songs:
+        results.append({
+            'id': song.id,
+            'title': song.title,
+            'type': song.type.name,                # Assuming `song.type` is a relationship to a `Type` model
+            'style': song.style.name if song.style else 'N/A', # Assuming style can be null
+            'singers': [singer.name for singer in song.singers],
+            'recording_year': song.recording_year,
+            'orchestra': song.orchestra.name if song.orchestra else 'Unknown'
+        })
+    return jsonify(results)     
