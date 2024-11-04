@@ -14,6 +14,13 @@
 - [x] Edit tanda is not working -  The view is loading the songs properly
 - [x] Edit playlist is not working - The view is loading the tandas properly
 
+### Core Implementations
+- [ ] Search Tandas
+- [ ] Edit Tanda
+- [ ] Create Playlist
+- [ ] Edit Playlist
+- [ ] Search Playlist
+ 
 ## UI
 - [x] At the list songs page, add the year information of each song. 
 - [ ] When a song is instrumental disable the singer option. - New UI
