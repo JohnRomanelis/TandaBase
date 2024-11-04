@@ -4,7 +4,7 @@
 {% block title %}Create Tanda{% endblock %}
 {% block content %}
 <h1>Create a New Tanda</h1>
-<form method="post" id="tanda_form">
+<form method="post">
     {{ form.hidden_tag() }}
     <div class="form-group">
         {{ form.name.label(class="form-label") }}
@@ -27,29 +27,28 @@
         {{ form.youtube_link(class="form-control") }}
     </div>
 
+    <!-- Song Search and Selection -->
+    <h2>Add Songs to Tanda</h2>
+    {{ song_search_box(orchestras, singers, types, styles, action_url='', method='get', use_ajax=True) }}
+
+    <div id="song-search-results" class="list-group mt-3">
+        <!-- Song names will be displayed here -->
+    </div>
+
     <div class="form-group">
         <label>Selected Songs:</label>
         <ul id="selected-songs" class="list-group"></ul>
     </div>
-    
-    <input type="hidden" name="song_ids" id="song_ids">
-
+    {{ form.song_ids() }}
 
     <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
     <a href="{{ url_for('tanda_bp.list_tandas') }}" class="btn btn-secondary">Cancel</a>
-
+    
 </form>
 
-  <!-- Song Search and Selection -->
-  <h2>Add Songs to Tanda</h2>
-  {{ song_search_box(orchestras, singers, types, styles, action_url='', method='get', use_ajax=True) }}
 
-  <div id="song-search-results" class="list-group mt-3">
-      <!-- Song names will be displayed here -->
-  </div>
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/tanda.js') }}"></script>
 {% endblock %}
-
 {% endblock %}

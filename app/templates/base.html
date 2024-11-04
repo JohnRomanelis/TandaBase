@@ -69,3 +69,50 @@
     {% block scripts %}{% endblock %}
 </body>
 </html>
+
+
+
+<style>
+    /* Make the navbar items display in a row */
+    .navbar-nav {
+        display: flex;
+        flex-direction: row;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Style each navbar item */
+    .navbar-nav .nav-item {
+        padding: 0 15px;
+        position: relative;
+    }
+
+    /* Add a vertical divider on the right of each item except the last */
+    .navbar-nav .nav-item:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 100%;
+        width: 1px;
+        background-color: #ddd;
+    }
+
+    /* Optional: Style for active menu item */
+    .navbar-nav .nav-item.active > .nav-link {
+        font-weight: bold;
+        color: #0056b3; /* or any color of your choice */
+    }
+
+    /* Optional: Styling for the links */
+    .navbar-nav .nav-link {
+        color: #333;
+        text-decoration: none;
+    }
+
+    /* Hover effect */
+    .navbar-nav .nav-link:hover {
+        color: #0056b3; /* or any color of your choice */
+    }
+</style>

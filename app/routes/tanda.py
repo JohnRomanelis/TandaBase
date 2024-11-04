@@ -5,7 +5,9 @@ from app.forms.tanda_forms import TandaForm
 from app.forms.delete_form import DeleteForm
 from app.services.tanda_service import TandaService
 from app.services.song_service import SongService
-from app.extensions import db
+from app.services.orchestra_service import OrchestraService
+from app.services.singer_service import SingerService
+from app.services.type_and_style_service import TypeService, StyleService
 
 tanda_bp = Blueprint('tanda_bp', __name__)
 
@@ -17,20 +19,37 @@ def list_tandas():
 
 @tanda_bp.route('/create', methods=['GET', 'POST'])
 def create_tanda():
+    print("Form submission received")  # Check if any request hits this route
+
     form = TandaForm()
+    print(form.errors)
     if form.validate_on_submit():
+        print("We are in the create_tanda route") 
+
+        # preprocess the song IDS 
+        #TODO: This looks like a workaround. Need to check if there is a better way to do this.
+        song_ids = request.form.getlist('song_ids')[0].split(',')
+        song_ids = [int(song_id) for song_id in song_ids]
+        
         data = {
             'name': form.name.data,
             'tanda_type_id': form.tanda_type_id.data,
             'comments': form.comments.data,
             'spotify_link': form.spotify_link.data,
             'youtube_link': form.youtube_link.data,
-            'song_ids': request.form.getlist('song_ids')
+            'song_ids': song_ids
         }
+        print(data)
         TandaService.create_tanda(data)
         flash('Tanda created successfully!', 'success')
         return redirect(url_for('tanda_bp.list_tandas'))
-    return render_template('tanda/create_tanda.html', form=form)
+    print(form.errors)
+    # Fetch required data for the search box
+    orchestras = OrchestraService.get_all_orchestras()
+    singers = SingerService.get_all_singers()
+    types = TypeService.get_all_types()
+    styles = StyleService.get_all_styles()
+    return render_template('tanda/create_tanda.html', form=form, orchestras=orchestras, singers=singers, types=types, styles=styles)
 
 @tanda_bp.route('/edit/<int:tanda_id>', methods=['GET', 'POST'])
 def edit_tanda(tanda_id):

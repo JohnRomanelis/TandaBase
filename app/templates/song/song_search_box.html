@@ -1,0 +1,72 @@
+<!-- app/templates/song/song_search_box.html -->
+{% macro song_search_box(orchestras, singers, types, styles, action_url, method='get', use_ajax=False) %}
+<form id="song-search-form" method="{{ method }}" action="{{ action_url }}">
+    <div class="form-row">
+        <!-- Song Name -->
+        <div class="form-group col-md-4">
+            <label for="song-name">Song Name</label>
+            <input type="text" class="form-control" id="song-name" name="name" placeholder="Enter song name" value="{{ request.args.get('name', '') }}">
+        </div>
+        <!-- Orchestra -->
+        <div class="form-group col-md-4">
+            <label for="orchestra">Orchestra</label>
+            <select class="form-control" id="orchestra" name="orchestra_id">
+                <option value="">-- Select Orchestra --</option>
+                {% for orchestra in orchestras %}
+                <option value="{{ orchestra.id }}" {% if orchestra.id|string == request.args.get('orchestra_id', '') %}selected{% endif %}>{{ orchestra.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <!-- Singer -->
+        <div class="form-group col-md-4">
+            <label for="singer">Singer</label>
+            <select class="form-control" id="singer" name="singer_id">
+                <option value="">-- Select Singer --</option>
+                {% for singer in singers %}
+                <option value="{{ singer.id }}">{{ singer.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <!-- Type -->
+        <div class="form-group col-md-4">
+            <label for="type">Type</label>
+            <select class="form-control" id="type" name="type_id">
+                <option value="">-- Select Type --</option>
+                {% for type in types %}
+                <option value="{{ type.id }}">{{ type.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <!-- Style -->
+        <div class="form-group col-md-4">
+            <label for="style">Style</label>
+            <select class="form-control" id="style" name="style_id">
+                <option value="">-- Select Style --</option>
+                {% for style in styles %}
+                <option value="{{ style.id }}">{{ style.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <!-- Year Range -->
+        <div class="form-group col-md-4">
+            <label for="year-range">Year Range</label>
+            <div class="form-row">
+                <div class="col">
+                    <input type="number" class="form-control" id="year-from" name="year_from" placeholder="From" min="1800" max="2100">
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" id="year-to" name="year_to" placeholder="To" min="1800" max="2100">
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if not use_ajax %}
+        <button type="submit" class="btn btn-primary mt-3">Search</button>
+    {% else %}
+        <button type="button" id="search-songs-btn" class="btn btn-primary mt-2">Search Songs</button>
+    {% endif %}
+
+</form>
+{% endmacro %}
