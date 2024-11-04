@@ -40,6 +40,24 @@ document.addEventListener('DOMContentLoaded', function() {
         renderSelectedSongsTable(); // Re-render the table
     }
 
+    // Function to move a song up in the list
+    function moveSongUp(index) {
+        if (index > 0) {
+            [selectedSongs[index - 1], selectedSongs[index]] = [selectedSongs[index], selectedSongs[index - 1]];
+            updateSongIdsField();
+            renderSelectedSongsTable();
+        }
+    }
+
+    // Function to move a song down in the list
+    function moveSongDown(index) {
+        if (index < selectedSongs.length - 1) {
+            [selectedSongs[index + 1], selectedSongs[index]] = [selectedSongs[index], selectedSongs[index + 1]];
+            updateSongIdsField();
+            renderSelectedSongsTable();
+        }
+    }
+
     // Function to update the hidden input field with selected song IDs
     function updateSongIdsField() {
         const songIds = selectedSongs.map(song => song.id);
@@ -61,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         table.appendChild(headerRow);
 
-        selectedSongs.forEach(song => {
+        selectedSongs.forEach((song, index) => {
             const row = document.createElement('tr');
 
             const titleCell = document.createElement('td');
@@ -92,8 +110,33 @@ document.addEventListener('DOMContentLoaded', function() {
             orchestraCell.textContent = song.orchestra;
             row.appendChild(orchestraCell);
             
-            // Actions cell with the remove button
+            // Initialize action cells
             const actionsCell = document.createElement('td');
+
+            // Up arrow button
+            const upBtn = document.createElement('button');
+            upBtn.className = 'btn btn-link btn-sm';
+            upBtn.innerHTML = '&#x25B2;'; // Up arrow symbol
+            upBtn.title = 'Move Up';
+            upBtn.disabled = index === 0; // Disable if it's the first song
+            upBtn.addEventListener('click', function() {
+                moveSongUp(index);
+            });
+            actionsCell.appendChild(upBtn);
+
+            // Down arrow button
+            const downBtn = document.createElement('button');
+            downBtn.className = 'btn btn-link btn-sm';
+            downBtn.innerHTML = '&#x25BC;'; // Down arrow symbol
+            downBtn.title = 'Move Down';
+            downBtn.disabled = index === selectedSongs.length - 1; // Disable if it's the last song
+            downBtn.addEventListener('click', function() {
+                moveSongDown(index);
+            });
+            actionsCell.appendChild(downBtn);
+
+            // Actions cell with the remove button
+            
             const removeBtn = document.createElement('button');
             removeBtn.className = 'btn btn-danger btn-sm';
             removeBtn.textContent = 'Remove';
